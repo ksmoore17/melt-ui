@@ -168,6 +168,13 @@ export type DateFieldProps = {
 	hideTimeZone?: boolean;
 
 	/**
+	 * Whether or not to maintain the day period on hour segment input.
+	 *
+	 * @default false
+	 */
+	maintainDayPeriod?: boolean;
+
+	/**
 	 * The name to use for the hidden input element of the date field,
 	 * which is used to submit the ISO string value of the date field
 	 * to a server.

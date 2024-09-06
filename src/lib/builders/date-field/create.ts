@@ -71,6 +71,7 @@ const defaults = {
 	locale: 'en',
 	granularity: undefined,
 	hideTimeZone: false,
+	maintainDayPeriod: false,
 	disabled: false,
 	readonly: false,
 	readonlySegments: undefined,
@@ -110,6 +111,7 @@ export function createDateField(props?: CreateDateFieldProps) {
 		granularity,
 		hourCycle,
 		hideTimeZone,
+		maintainDayPeriod,
 		isDateUnavailable,
 		disabled,
 		readonly,
@@ -523,15 +525,28 @@ export function createDateField(props?: CreateDateFieldProps) {
 					};
 				} else if (part === 'hour') {
 					const next = castCb(pVal) as DateAndTimeSegmentObj['hour'];
-					if (next !== null && prev.dayPeriod !== null) {
-						const dayPeriod = formatter.dayPeriod(toDate(dateRef.set({ hour: next })));
+					let hour = next;
+					if (hour !== null && prev.dayPeriod !== null) {
+						const $maintainDayPeriod = maintainDayPeriod.get();
+						if ($maintainDayPeriod) {
+							if (prev.dayPeriod === 'AM') {
+								if (hour >= 12) {
+									hour = hour - 12;
+								}
+							} else if (prev.dayPeriod === 'PM') {
+								if (hour < 12) {
+									hour = hour + 12;
+								}
+							}
+						}
+						const dayPeriod = formatter.dayPeriod(toDate(dateRef.set({ hour: hour })));
 						if (dayPeriod === 'AM' || dayPeriod === 'PM') {
 							prev.dayPeriod = dayPeriod;
 						}
 					}
 					return {
 						...prev,
-						[part]: next,
+						[part]: hour,
 					};
 				}
 
@@ -1209,7 +1224,7 @@ export function createDateField(props?: CreateDateFieldProps) {
 			const num = parseInt(e.key);
 			let moveToNext = false;
 			updateSegment('hour', (prev) => {
-				const maxStart = Math.floor(24 / 10);
+				const maxStart = Math.floor(($hourCycle || 24) / 10);
 
 				/**
 				 * If the user has left the segment, we want to reset the
@@ -1253,6 +1268,13 @@ export function createDateField(props?: CreateDateFieldProps) {
 					return num;
 				}
 
+				const $maintainDayPeriod = maintainDayPeriod.get();
+				if ($maintainDayPeriod) {
+					if (prev >= 12) {
+						prev = prev - 12;
+					}
+				}
+
 				const digits = prev.toString().length;
 				const total = parseInt(prev.toString() + num.toString());
 
@@ -1262,7 +1284,7 @@ export function createDateField(props?: CreateDateFieldProps) {
 				 * reset the segment as if the user had pressed the backspace key and then
 				 * typed a number.
 				 */
-				if (digits === 2 || total > 24) {
+				if (digits === 2 || total > ($hourCycle || 24)) {
 					/**
 					 * As we're doing elsewhere, we're checking if the number is greater
 					 * than the max start digit, and if so, we're moving to the next segment.
