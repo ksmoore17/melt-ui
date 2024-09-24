@@ -573,6 +573,41 @@ and editable.
 	<svelte:component this={previews.readonlySegments} />
 </Preview>
 
+### Maintain Day Period
+
+In certain locales, users may not be used to working with 24 hour times. For example, starting from
+4:00pm and inputting `3` in the hour segment and recieving 3am instead of 3pm may be unintuitive.
+Similarly, inputting `1` -> `4` -> `5` and receiving 2:50pm may be unintuitive to users expecting
+1:45 pm.
+
+To some degree, this is solved by the setting the `hourCycle` prop to 12, but you can use the
+`maintainDayPeriod` to ensure that the day period segment can only be changed by input in that
+segment.
+
+```svelte showLineNumbers {11-12}
+<script lang="ts">
+	import { createDateField, melt } from '$lib'
+	import { CalendarDateTime } from '@internationalized/date'
+
+	const {
+		elements: { field, segment, label },
+		states: { segmentContents }
+	} = createDateField({
+		defaultValue: new CalendarDateTime(2023, 10, 11, 11, 0),
+		granularity: 'minute',
+		hourCycle: 12,
+		maintainDayPeriod: true
+	})
+</script>
+```
+
+Be careful using this without `hourCycle` defined as `12`, as you will be able to input hour values
+like 23 which will correspond to 11, but not necssarily 11 pm.
+
+<Preview code={snippets.maintainDayPeriod} variant="dark" size="sm">
+	<svelte:component this={previews.maintainDayPeriod} />
+</Preview>
+
 ## API Reference
 
 <APIReference {schemas} />

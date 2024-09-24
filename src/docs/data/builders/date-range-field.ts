@@ -81,6 +81,12 @@ const dateRangeFieldProps = [
 		description: 'The hour cycle to use when formatting the date.',
 	},
 	{
+		name: 'maintainDayPeriod',
+		type: 'boolean',
+		default: 'false',
+		description: 'Whether or not to maintain the day period on hour segment input.',
+	},
+	{
 		name: 'locale',
 		type: 'string',
 		default: '"en"',

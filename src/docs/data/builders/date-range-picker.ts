@@ -103,6 +103,12 @@ const dateRangePickerProps = [
 		description: 'An accessible label for the calendar.',
 	},
 	{
+		name: 'maintainDayPeriod',
+		type: 'boolean',
+		default: 'false',
+		description: 'Whether or not to maintain the day period on hour segment input.',
+	},
+	{
 		name: 'ids',
 		type: 'DateRangePickerIds',
 		description: 'Override the default ids used by the various elements within the date picker.',
