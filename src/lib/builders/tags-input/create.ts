@@ -499,7 +499,7 @@ export function createTagsInput(props?: CreateTagsInputProps) {
 					'data-editing': editing ? '' : undefined,
 					'data-disabled': disabledAttr(disabled),
 					disabled: disabledAttr(disabled),
-					hidden: editing ? '' : undefined,
+					hidden: editing ? true : undefined,
 					tabindex: -1,
 					style: editing
 						? styleToString({
@@ -637,7 +637,7 @@ export function createTagsInput(props?: CreateTagsInputProps) {
 					'aria-hidden': !editing,
 					'data-tag-id': tag.id,
 					'data-tag-value': tag.value,
-					hidden: !editing ? '' : undefined,
+					hidden: !editing ? true : undefined,
 					contenteditable: editing,
 					tabindex: -1,
 					style: !editing
